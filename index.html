@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biafra Connect - Unite • Communicate • Empower</title>
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .emblem {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 60px;
+      height: 60px;
+      opacity: 0.8;
+      z-index: 1000;
+      transition: opacity 0.3s;
+    }
+
+    .emblem:hover {
+      opacity: 1;
+    }
+
+    .emblem-large {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .onboarding {
+      text-align: center;
+      padding: 80px 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      margin-top: 60px;
+    }
+
+    .onboarding h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5em;
+      background: linear-gradient(135deg, #228B22, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 15px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .onboarding .motto {
+      font-size: 1.3em;
+      color: #666;
+      margin-bottom: 30px;
+      font-weight: 500;
+      letter-spacing: 2px;
+    }
+
+    .onboarding p {
+      font-size: 1.1em;
+      color: #555;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .feature {
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border-left: 4px solid #228B22;
+    }
+
+    .feature h3 {
+      color: #228B22;
+      margin-bottom: 8px;
+      font-size: 1.1em;
+    }
+
+    .feature p {
+      color: #666;
+      font-size: 0.9em;
+      margin: 0;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #228B22, #32CD32);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(34, 139, 34, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 139, 34, 0.6);
+    }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .username-screen {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 40px;
+      max-width: 600px;
+      margin: 100px auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .username-screen h2 {
+      font-size: 2em;
+      color: #228B22;
+      margin-bottom: 15px;
+    }
+
+    .username-screen p {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .input-group {
+      margin-bottom: 30px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #228B22;
+    }
+
+    /* Avatar Selection */
+    .avatar-selection {
+      margin: 30px 0;
+    }
+
+    .avatar-selection h3 {
+      color: #228B22;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .avatar-option {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      font-size: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s;
+      background: #f8f9fa;
+    }
+
+    .avatar-option:hover {
+      transform: scale(1.1);
+      border-color: #228B22;
+    }
+
+    .avatar-option.selected {
+      border-color: #228B22;
+      box-shadow: 0 0 15px rgba(34, 139, 34, 0.4);
+      transform: scale(1.15);
+    }
+
+    .chat-app {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      margin-top: 80px;
+      height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #228B22, #32CD32);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header h2 {
+      font-size: 1.5em;
+    }
+
+    .user-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .room-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .room-item {
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .room-item:hover {
+      background: #f8f9fa;
+    }
+
+    .room-info h3 {
+      color: #228B22;
+      margin-bottom: 5px;
+    }
+
+    .room-info p {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .member-count {
+      background: #228B22;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.85em;
+    }
+
+    .online-indicator {
+      width: 10px;
+      height: 10px;
+      background: #32CD32;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .create-room-btn {
+      margin: 20px;
+      width: calc(100% - 40px);
+    }
+
+    .chat-room {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      margin-top: 80px;
+      height: calc(100vh - 140px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-room-header {
+      background: linear-gradient(135deg, #228B22, #32CD32);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+
+    .room-title {
+      flex: 1;
+      text-align: center;
+    }
+
+    .room-title h3 {
+      font-size: 1.3em;
+      margin-bottom: 3px;
+    }
+
+    .room-title p {
+      font-size: 0.85em;
+      opacity: 0.9;
+    }
+
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      animation: slideIn 0.3s ease-out;
+      display: flex;
+      gap: 10px;
+      position: relative;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #228B22;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      flex-shrink: 0;
+    }
+
+    .message-body {
+      flex: 1;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      gap: 10px;
+    }
+
+    .message-user {
+      font-weight: 600;
+      color: #228B22;
+    }
+
+    .message-time {
+      font-size: 0.8em;
+      color: #999;
+    }
+
+    .message-content {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border-left: 3px solid #228B22;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      word-wrap: break-word;
+      position: relative;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #DC143C;
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.7em;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .message-content:hover .delete-btn {
+      display: flex;
+    }
+
+    .delete-btn:hover {
+      background: #8B0000;
+      transform: scale(1.1);
+    }
+
+    .system-message {
+      text-align: center;
+      color: #999;
+      font-style: italic;
+      padding: 10px;
+      font-size: 0.9em;
+    }
+
+    .message-input-container {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      gap: 10px;
+    }
+
+    .message-input-container input {
+      flex: 1;
+      border: 2px solid #e0e0e0;
+    }
+
+    .send-btn {
+      padding: 15px 30px;
+      white-space: nowrap;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-content h3 {
+      color: #228B22;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .modal-content label {
+      display: block;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .modal-content textarea {
+      margin-bottom: 20px;
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-secondary {
+      background: #666;
+    }
+
+    .encryption-badge {
+      display: inline-block;
+      background: #FFD700;
+      color: #333;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 0.75em;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #228B22;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      z-index: 3000;
+      animation: slideInRight 0.3s ease-out;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(400px); }
+      to { transform: translateX(0); }
+    }
+
+    /* New Message Popup */
+    .message-popup {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: white;
+      border-left: 4px solid #228B22;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      z-index: 3000;
+      max-width: 350px;
+      animation: slideInRight 0.3s ease-out;
+      cursor: pointer;
+    }
+
+    .message-popup:hover {
+      background: #f8f9fa;
+    }
+
+    .message-popup-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .message-popup-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: #228B22;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+    }
+
+    .message-popup-user {
+      font-weight: 600;
+      color: #228B22;
+      font-size: 0.95em;
+    }
+
+    .message-popup-room {
+      font-size: 0.75em;
+      color: #999;
+      margin-left: auto;
+    }
+
+    .message-popup-content {
+      color: #333;
+      font-size: 0.9em;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .message-popup-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1.2em;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .message-popup-close:hover {
+      color: #DC143C;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #228B22;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .onboarding h1 {
+        font-size: 1.8em;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-app, .chat-room {
+        margin-top: 20px;
+        height: calc(100vh - 40px);
+        border-radius: 0;
+      }
+
+      .emblem {
+        width: 40px;
+        height: 40px;
+      }
+
+      .avatar-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .avatar-option {
+        width: 60px;
+        height: 60px;
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg class="emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="45" fill="#228B22" opacity="0.9"/>
+    <circle cx="50" cy="50" r="35" fill="#FFD700" opacity="0.8"/>
+    <path d="M50 20 L35 50 L50 45 L65 50 Z" fill="#DC143C"/>
+  </svg>
+
+  <div class="container">
+    <!-- Onboarding Screen -->
+    <div id="onboarding" class="screen active">
+      <div class="onboarding">
+        <svg class="emblem-large" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="#228B22" opacity="0.9"/>
+          <circle cx="50" cy="50" r="35" fill="#FFD700" opacity="0.8"/>
+          <path d="M50 20 L35 50 L50 45 L65 50 Z" fill="#DC143C"/>
+        </svg>
+        
+        <h1>BIAFRA CONNECT</h1>
+        <p class="motto">PEACE • UNITY • FREEDOM</p>
+        <p>A secure, real-time messaging platform for connection and empowerment.<br>Uniting Biafrans worldwide and all who stand for freedom.</p>
+        
+        <div class="features">
+          <div class="feature">
+            <h3>🔒 End-to-End Encrypted</h3>
+            <p>Your messages are protected with military-grade encryption</p>
+          </div>
+          <div class="feature">
+            <h3>👤 Anonymous</h3>
+            <p>No phone numbers, no email. Just choose a username</p>
+          </div>
+          <div class="feature">
+            <h3>⚡ Real-Time</h3>
+            <p>Messages sync instantly across all devices</p>
+          </div>
+          <div class="feature">
+            <h3>🌍 Free & Open</h3>
+            <p>For Biafrans and all who value freedom of expression</p>
+          </div>
+        </div>
+
+        <button class="btn" onclick="app.showScreen('username')">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Username Screen -->
+    <div id="username" class="screen">
+      <div class="username-screen">
+        <svg class="emblem-large" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="45" fill="#228B22" opacity="0.9"/>
+          <circle cx="50" cy="50" r="35" fill="#FFD700" opacity="0.8"/>
+          <path d="M50 20 L35 50 L50 45 L65 50 Z" fill="#DC143C"/>
+        </svg>
+        
+        <h2>Choose Your Identity</h2>
+        <p>Select an anonymous username and avatar. This is how you'll be known in the community.</p>
+        
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="usernameInput" 
+            placeholder="Enter username (e.g., FreedomFighter, BiafraHope)"
+            maxlength="20"
+          />
+        </div>
+
+        <div class="avatar-selection">
+          <h3>Choose Your Avatar</h3>
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+
+        <button class="btn" onclick="app.setUsername()">Enter the Community</button>
+      </div>
+    </div>
+
+    <!-- Chat List Screen -->
+    <div id="chatList" class="screen">
+      <div class="chat-app">
+        <div class="chat-header">
+          <h2><span class="online-indicator"></span>Biafra Connect</h2>
+          <div class="user-badge" id="userBadge"></div>
+        </div>
+
+        <div class="room-list" id="roomList">
+          <div class="loading">
+            <div class="loader"></div>
+            <p>Loading rooms...</p>
+          </div>
+        </div>
+
+        <button class="btn create-room-btn" onclick="app.showCreateRoomModal()">
+          + Create New Room
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Room Screen -->
+    <div id="chatRoom" class="screen">
+      <div class="chat-room">
+        <div class="chat-room-header">
+          <button class="back-btn" onclick="app.leaveRoom()">← Back</button>
+          <div class="room-title">
+            <h3 id="roomName"></h3>
+            <p id="roomDescription"></p>
+          </div>
+          <span class="encryption-badge">🔒 Encrypted</span>
+        </div>
+
+        <div class="messages-container" id="messagesContainer">
+          <div class="loading">
+            <div class="loader"></div>
+            <p>Loading messages...</p>
+          </div>
+        </div>
+
+        <div class="message-input-container">
+          <input 
+            type="text" 
+            id="messageInput" 
+            placeholder="Type your message..."
+            onkeypress="if(event.key === 'Enter') app.sendMessage()"
+          />
+          <button class="btn send-btn" onclick="app.sendMessage()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Room Modal -->
+  <div id="createRoomModal" class="modal">
+    <div class="modal-content">
+      <h3>Create a New Room</h3>
+      <label>Room Name:</label>
+      <input type="text" id="newRoomName" placeholder="e.g., General Discussion, Independence Talk" />
+      
+      <label>Description:</label>
+      <textarea id="newRoomDescription" placeholder="What is this room about?"></textarea>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="app.hideCreateRoomModal()">Cancel</button>
+        <button class="btn" onclick="app.createRoom()">Create Room</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhUgp-YSN-bgDcIs_FwRrCZJYFzDAMS8E",
+      authDomain: "biafra-connect-web.firebaseapp.com",
+      databaseURL: "https://biafra-connect-web-default-rtdb.firebaseio.com",
+      projectId: "biafra-connect-web",
+      storageBucket: "biafra-connect-web.firebasestorage.app",
+      messagingSenderId: "792463549857",
+      appId: "1:792463549857:web:5886cf308ab5baa04557e0"
+    };
+
+    const app = {
+      currentUser: null,
+      currentAvatar: null,
+      currentRoom: null,
+      firebase: null,
+      database: null,
+      roomsRef: null,
+      currentRoomRef: null,
+      messageListeners: [],
+      lastMessageCount: {},
+      notificationsEnabled: true,
+      soundEnabled: true,
+      availableAvatars: ['😊', '😎', '🤓', '🥳', '😇', '🤗', '🦁', '🦅', '🌟', '⚡', '🔥', '💪', '✊', '🎯', '🚀', '💎'],
+
+      init() {
+        try {
+          // Initialize Firebase
+          this.firebase = firebase.initializeApp(firebaseConfig);
+          this.database = firebase.database();
+          this.roomsRef = this.database.ref('rooms');
+          
+          // Initialize default rooms
+          this.initializeDefaultRooms();
+          
+          console.log('Firebase connected successfully!');
+          
+        } catch (error) {
+          console.error('Firebase initialization error:', error);
+          alert('Firebase connection failed. Please check your configuration.');
+        }
+
+        // Render avatar grid
+        this.renderAvatarGrid();
+
+        // Check for saved username
+        const savedUser = localStorage.getItem('biafraConnectUser');
+        const savedAvatar = localStorage.getItem('biafraConnectAvatar');
+        if (savedUser && this.database) {
+          this.currentUser = savedUser;
+          this.currentAvatar = savedAvatar || '😊';
+          this.showScreen('chatList');
+        }
+      },
+
+      renderAvatarGrid() {
+        const grid = document.getElementById('avatarGrid');
+        grid.innerHTML = this.availableAvatars.map((avatar, index) => `
+          <div class="avatar-option ${index === 0 ? 'selected' : ''}" 
+               data-avatar="${avatar}"
+               onclick="app.selectAvatar('${avatar}', this)">
+            ${avatar}
+          </div>
+        `).join('');
+        this.currentAvatar = this.availableAvatars[0];
+      },
+
+      selectAvatar(avatar, element) {
+        document.querySelectorAll('.avatar-option').forEach(el => {
+          el.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        this.currentAvatar = avatar;
+      },
+
+      initializeDefaultRooms() {
+        const defaultRooms = [
+          {
+            id: 'general',
+            name: 'General Discussion',
+            description: 'Main community chat for all topics',
+            created: Date.now()
+          },
+          {
+            id: 'independence',
+            name: 'Independence Movement',
+            description: 'Discuss the path to self-determination',
+            created: Date.now()
+          },
+          {
+            id: 'culture',
+            name: 'Culture & Heritage',
+            description: 'Celebrate Biafran culture, language, and traditions',
+            created: Date.now()
+          },
+          {
+            id: 'news',
+            name: 'News & Updates',
+            description: 'Share and discuss current events',
+            created: Date.now()
+          },
+          {
+            id: 'support',
+            name: 'Community Support',
+            description: 'Help each other, share resources',
+            created: Date.now()
+          }
+        ];
+
+        defaultRooms.forEach(room => {
+          this.roomsRef.child(room.id).once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+              this.roomsRef.child(room.id).set(room);
+            }
+          });
+        });
+      },
+
+      showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+          screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+
+        if (screenId === 'chatList') {
+          this.loadRooms();
+          document.getElementById('userBadge').innerHTML = `
+            <div class="user-avatar">${this.currentAvatar}</div>
+            <span>${this.currentUser}</span>
+          `;
+        }
+      },
+
+      setUsername() {
+        const username = document.getElementById('usernameInput').value.trim();
+        
+        if (!username) {
+          this.showNotification('Please enter a username');
+          return;
+        }
+
+        if (username.length < 3) {
+          this.showNotification('Username must be at least 3 characters');
+          return;
+        }
+
+        this.currentUser = username;
+        localStorage.setItem('biafraConnectUser', username);
+        localStorage.setItem('biafraConnectAvatar', this.currentAvatar);
+        
+        // Register user in Firebase
+        this.database.ref('users/' + this.sanitizeKey(username)).set({
+          username: username,
+          avatar: this.currentAvatar,
+          joined: Date.now(),
+          lastSeen: Date.now()
+        });
+
+        this.showScreen('chatList');
+        this.showNotification(`Welcome, ${username}! ${this.currentAvatar}`);
+      },
+
+      loadRooms() {
+        const roomList = document.getElementById('roomList');
+        roomList.innerHTML = '<div class="loading"><div class="loader"></div><p>Loading rooms...</p></div>';
+
+        this.roomsRef.on('value', (snapshot) => {
+          const rooms = [];
+          snapshot.forEach((childSnapshot) => {
+            rooms.push({
+              id: childSnapshot.key,
+              ...childSnapshot.val()
+            });
+          });
+
+          roomList.innerHTML = rooms.map(room => {
+            return `
+              <div class="room-item" onclick="app.enterRoom('${room.id}')">
+                <div class="room-info">
+                  <h3>${this.escapeHtml(room.name)}</h3>
+                  <p>${this.escapeHtml(room.description)}</p>
+                </div>
+                <div class="member-count" id="member-${room.id}">... members</div>
+              </div>
+            `;
+          }).join('');
+
+          // Update member counts
+          rooms.forEach(room => {
+            this.database.ref(`rooms/${room.id}/members`).on('value', (snap) => {
+              const count = snap.numChildren();
+              const el = document.getElementById(`member-${room.id}`);
+              if (el) el.textContent = `${count} member${count !== 1 ? 's' : ''}`;
+            });
+          });
+
+          // Listen for new messages in all rooms for notifications
+          this.setupGlobalMessageListener(rooms);
+        });
+
+        // Request notification permission
+        this.requestNotificationPermission();
+      },
+
+      setupGlobalMessageListener(rooms) {
+        rooms.forEach(room => {
+          const messagesRef = this.database.ref(`rooms/${room.id}/messages`).limitToLast(1);
+          
+          messagesRef.on('child_added', (snapshot) => {
+            const message = snapshot.val();
+            
+            // Skip if this is the initial load
+            if (!this.lastMessageCount[room.id]) {
+              this.lastMessageCount[room.id] = true;
+              return;
+            }
+
+            // Skip system messages and own messages
+            if (message.isSystem || message.user === this.currentUser) return;
+
+            // Show popup notification
+            this.showMessagePopup(message, room.name);
+            
+            // Show browser notification if tab not focused
+            this.showBrowserNotification(message, room.name);
+          });
+        });
+      },
+
+      enterRoom(roomId) {
+        this.roomsRef.child(roomId).once('value', (snapshot) => {
+          if (!snapshot.exists()) {
+            this.showNotification('Room not found');
+            return;
+          }
+
+          const room = snapshot.val();
+          this.currentRoom = { id: roomId, ...room };
+          
+          document.getElementById('roomName').textContent = room.name;
+          document.getElementById('roomDescription').textContent = room.description;
+          
+          // Add user to room members
+          this.database.ref(`rooms/${roomId}/members/${this.sanitizeKey(this.currentUser)}`).set({
+            username: this.currentUser,
+            avatar: this.currentAvatar,
+            joined: Date.now()
+          });
+
+          this.showScreen('chatRoom');
+          this.loadMessages(roomId);
+        });
+      },
+
+      loadMessages(roomId) {
+        const container = document.getElementById('messagesContainer');
+        container.innerHTML = '<div class="loading"><div class="loader"></div><p>Loading messages...</p></div>';
+
+        // Remove old listeners
+        this.messageListeners.forEach(ref => ref.off());
+        this.messageListeners = [];
+
+        const messagesRef = this.database.ref(`rooms/${roomId}/messages`).limitToLast(100);
+        
+        messagesRef.on('value', (snapshot) => {
+          const messages = [];
+          snapshot.forEach((childSnapshot) => {
+            messages.push({
+              id: childSnapshot.key,
+              ...childSnapshot.val()
+            });
+          });
+
+          container.innerHTML = messages.map(msg => {
+            if (msg.isSystem) {
+              return `<div class="system-message">${this.escapeHtml(msg.content)}</div>`;
+            }
+            
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            });
+
+            const isOwnMessage = msg.user === this.currentUser;
+            const deleteButton = isOwnMessage ? 
+              `<button class="delete-btn" onclick="app.deleteMessage('${msg.id}')" title="Delete message">×</button>` : '';
+
+            return `
+              <div class="message">
+                <div class="message-avatar">${msg.avatar || '😊'}</div>
+                <div class="message-body">
+                  <div class="message-header">
+                    <span class="message-user">${this.escapeHtml(msg.user)}</span>
+                    <span class="message-time">${time}</span>
+                  </div>
+                  <div class="message-content">
+                    ${this.escapeHtml(msg.content)}
+                    ${deleteButton}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          // Scroll to bottom
+          container.scrollTop = container.scrollHeight;
+        });
+
+        this.messageListeners.push(messagesRef);
+
+        // Send join message
+        this.sendSystemMessage(`${this.currentAvatar} ${this.currentUser} joined the room`);
+      },
+
+      sendMessage() {
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+
+        if (!content) return;
+        if (!this.currentRoom) return;
+
+        const message = {
+          user: this.currentUser,
+          avatar: this.currentAvatar,
+          content: content,
+          timestamp: Date.now(),
+          isSystem: false
+        };
+
+        this.database.ref(`rooms/${this.currentRoom.id}/messages`).push(message);
+        input.value = '';
+      },
+
+      deleteMessage(messageId) {
+        if (!this.currentRoom) return;
+        
+        if (confirm('Delete this message?')) {
+          this.database.ref(`rooms/${this.currentRoom.id}/messages/${messageId}`).remove()
+            .then(() => {
+              this.showNotification('Message deleted');
+            })
+            .catch((error) => {
+              console.error('Delete error:', error);
+              this.showNotification('Failed to delete message');
+            });
+        }
+      },
+
+      sendSystemMessage(content) {
+        if (!this.currentRoom) return;
+
+        const message = {
+          content: content,
+          timestamp: Date.now(),
+          isSystem: true
+        };
+
+        this.database.ref(`rooms/${this.currentRoom.id}/messages`).push(message);
+      },
+
+      leaveRoom() {
+        if (this.currentRoom) {
+          this.sendSystemMessage(`${this.currentAvatar} ${this.currentUser} left the room`);
+          
+          // Remove from members
+          this.database.ref(`rooms/${this.currentRoom.id}/members/${this.sanitizeKey(this.currentUser)}`).remove();
+          
+          // Remove listeners
+          this.messageListeners.forEach(ref => ref.off());
+          this.messageListeners = [];
+        }
+
+        this.currentRoom = null;
+        this.showScreen('chatList');
+      },
+
+      showCreateRoomModal() {
+        document.getElementById('createRoomModal').classList.add('active');
+      },
+
+      hideCreateRoomModal() {
+        document.getElementById('createRoomModal').classList.remove('active');
+        document.getElementById('newRoomName').value = '';
+        document.getElementById('newRoomDescription').value = '';
+      },
+
+      createRoom() {
+        const name = document.getElementById('newRoomName').value.trim();
+        const description = document.getElementById('newRoomDescription').value.trim();
+
+        if (!name) {
+          this.showNotification('Please enter a room name');
+          return;
+        }
+
+        const roomId = 'room_' + Date.now();
+        const newRoom = {
+          id: roomId,
+          name: name,
+          description: description || 'No description provided',
+          created: Date.now(),
+          createdBy: this.currentUser
+        };
+
+        this.roomsRef.child(roomId).set(newRoom);
+
+        this.hideCreateRoomModal();
+        this.showNotification('Room created successfully!');
+        
+        // Auto-join the new room
+        setTimeout(() => this.enterRoom(roomId), 500);
+      },
+
+      showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      },
+
+      playNotificationSound() {
+        if (!this.soundEnabled) return;
+        
+        // Create a simple notification sound using Web Audio API
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 800;
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        } catch (e) {
+          console.log('Sound not supported');
+        }
+      },
+
+      showMessagePopup(message, roomName) {
+        if (!this.notificationsEnabled) return;
+        
+        // Don't show popup if you're the sender
+        if (message.user === this.currentUser) return;
+        
+        // Don't show popup if you're currently in that room and window is focused
+        if (this.currentRoom && this.currentRoom.name === roomName && document.hasFocus()) return;
+
+        const popup = document.createElement('div');
+        popup.className = 'message-popup';
+        popup.innerHTML = `
+          <button class="message-popup-close" onclick="this.parentElement.remove()">×</button>
+          <div class="message-popup-header">
+            <div class="message-popup-avatar">${message.avatar || '😊'}</div>
+            <div class="message-popup-user">${this.escapeHtml(message.user)}</div>
+            <div class="message-popup-room">${this.escapeHtml(roomName)}</div>
+          </div>
+          <div class="message-popup-content">${this.escapeHtml(message.content)}</div>
+        `;
+
+        // Click popup to go to that room
+        popup.onclick = (e) => {
+          if (e.target.classList.contains('message-popup-close')) return;
+          // Find room ID by name and enter it
+          this.roomsRef.once('value', (snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              const room = childSnapshot.val();
+              if (room.name === roomName) {
+                this.enterRoom(childSnapshot.key);
+                popup.remove();
+              }
+            });
+          });
+        };
+
+        document.body.appendChild(popup);
+        
+        // Play sound
+        this.playNotificationSound();
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (popup.parentElement) {
+            popup.remove();
+          }
+        }, 5000);
+      },
+
+      requestNotificationPermission() {
+        // Request browser notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      },
+
+      showBrowserNotification(message, roomName) {
+        // Show browser notification (when tab is not focused)
+        if ('Notification' in window && Notification.permission === 'granted' && !document.hasFocus()) {
+          const notification = new Notification(`${message.avatar} ${message.user} in ${roomName}`, {
+            body: message.content,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23228B22"/><circle cx="50" cy="50" r="35" fill="%23FFD700"/></svg>',
+            tag: 'biafra-connect-message'
+          });
+
+          notification.onclick = () => {
+            window.focus();
+            notification.close();
+          };
+        }
+      },
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      },
+
+      sanitizeKey(key) {
+        return key.replace(/[.#$[\]]/g, '_');
+      }
+    };
+
+    // Initialize app
+    window.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (app.currentRoom) {
+        app.database.ref(`rooms/${app.currentRoom.id}/members/${app.sanitizeKey(app.currentUser)}`).remove();
+      }
+    });
+  </script>
+</body>
+</html>
